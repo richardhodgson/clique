@@ -1,4 +1,4 @@
-_(work in progress, see whats still [todo](https://github.com/richardhodgson/clique/todo.md))_
+_(work in progress, see whats still [todo](https://github.com/richardhodgson/clique/blob/master/todo.md))_
 
 # Clique
 
