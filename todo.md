@@ -8,7 +8,7 @@
 - controller route for client side js api (/clique.js)
 - -controller route for package-
 - -controller route home page-
-- make task for rhc deploy
+- -make task for rhc deploy-
 - better error handling for create() api
 
 ## Future
