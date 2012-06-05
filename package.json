@@ -23,5 +23,6 @@
     "devDependencies": {
         "litmus": ">=0.3.0",
         "usenode-release": ">=0.0.6"
-    }
+    },
+    "main": "./lib/clique"
 }
