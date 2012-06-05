@@ -1,0 +1,11 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <~method pageTitle>Clique</~method>
+        <title><% this.pageTitle() %></title>
+        <!-- link rel="stylesheet" type="text/css" media="screen" href="/style/site.css"/ -->
+    </head>
+    <body>
+<% next(this) %>
+    </body>
+</html>
