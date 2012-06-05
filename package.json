@@ -1,0 +1,22 @@
+{
+    "author": "Richard Hodgson <contact@rhodgson.co.uk> (http://rhodgson.co.uk)",
+    "name": "clique",
+    "description": "Self service RequireJS packages.",
+    "version": "0.0.0",
+    "homepage": "http://clique.rhodgson.co.uk/",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/richardhodgson/clique.git"
+    },
+    "scripts": {
+        "test": "make test"
+    },
+    "engines": {
+        "node": "~0.4.7"
+    },
+    "dependencies": {},
+    "devDependencies": {
+        "litmus": ">=0.3.0",
+        "usenode-release": ">=0.0.6"
+    }
+}
