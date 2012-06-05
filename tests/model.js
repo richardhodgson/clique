@@ -1,14 +1,14 @@
 var litmus = require('litmus');
 
-exports.test = new litmus.Test('Main Clique api', function () {
+exports.test = new litmus.Test('Internal clique objects', function () {
     var test = this;
-    test.plan(8);
+    test.plan(11);
 
     var Module = require('../lib/model').Module;
 
     var testModule = new Module('http://example.com/something.js');
 
-    test.isa(testModule, Module, 'Can create an instance of a module');
+    test.isa(testModule, Module, 'Can create an instance of a Module');
 
     test.throwsOk(
         function () {
@@ -30,31 +30,70 @@ exports.test = new litmus.Test('Main Clique api', function () {
     var result = testModule.get();
     test.isa(result['then'], Function, 'get returns a promise');
 
-    this.async('test successful response', function(handle) {
+    this.async('test successful response', function (complete) {
 
-        testModule.get().then(function (body) {
+        testModule.get().then(function (contents) {
 
-            test.is(body, 'some contents', 'resource body is returned by calling get()');
+            test.is(contents, 'some contents', 'resource body is returned by calling get()');
 
-            handle.resolve();
+            complete.resolve();
         });
 
         mock_request_callback(null, {statusCode: 200}, 'some contents');
     });
 
-    this.async('test error response', function(handle) {
+    test.async('test error response', function (complete) {
 
         testModule.get().then(
             function () {
-                handle.reject('get() resolved unexpectedly');
+                complete.reject('get() resolved unexpectedly');
             },
             function (error) {
                 test.is(error, 'an error', 'error is passed to get()');
-                handle.resolve();
+                complete.resolve();
             }
         );
 
         mock_request_callback('an error', null, null);
+    });
+
+    test.async('package creates and gets modules', function (complete) {
+
+        var Package = require('../lib/model').Package;
+
+        var testPackage = new Package([
+            'http://example.com/one.js',
+            'http://example.com/two.js'
+        ]);
+
+        test.isa(testPackage, Package, 'can create an instance of Package');
+
+        var modules = testPackage.getModules();
+
+        test.is(
+            modules,
+            {
+                'http://example.com/one.js': new Module('http://example.com/one.js'),
+                'http://example.com/two.js': new Module('http://example.com/two.js')
+            },
+            'Package creates module instances for each url is was constructed with'
+        );
+
+        var counter = 0,
+            mock_request = {};
+        mock_request.get = function (url, callback) {
+            counter++;
+            callback(null, {statusCode: 200}, 'response' + counter);
+        }
+
+        for (var module in modules) {
+            modules[module].setHttpClient(mock_request);
+        }
+
+        testPackage.get().then(function (contents) {
+            test.is(contents, 'response1 response2', 'Package is created from module responses');
+            complete.resolve();
+        });
     });
 
 });
