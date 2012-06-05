@@ -1,3 +1,5 @@
+_(work in progress, see whats still [todo](https://github.com/richardhodgson/clique/todo.md))_
+
 # Clique
 
 Self service RequireJS packages.
@@ -19,7 +21,7 @@ Now in your template:
 
     '<script type="text/javascript" src="' + url + '"></script>'
 
-## Clientside
+## Browser
 
 In the browser:
     
