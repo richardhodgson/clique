@@ -4,7 +4,7 @@ var litmus  = require('litmus'),
 exports.test = new litmus.Test('Webapp', function () {
     var test = this;
 
-    test.plan(6);
+    test.plan(7);
 
     var WebApp = require('../lib/webapp').WebApp;
 
