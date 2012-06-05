@@ -50,6 +50,11 @@ exports.test = new litmus.Test('Webapp', function () {
 
         clique.handle(request).then(function (response) {
             test.is(response.status, 200, 'Page is found');
+            test.is(
+                response.headers['Content-Type'],
+                'application/javascript',
+                'Correct mime type is sent'
+            );
             test.is(response.body[0], 'response1 response2', 'Response renders package');
             complete.resolve();
         });
