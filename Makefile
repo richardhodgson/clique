@@ -17,3 +17,5 @@ deploy:
 	fi
 	git push rhc master
 
+release: test
+	./node_modules/.bin/usenode-release .
