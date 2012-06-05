@@ -16,7 +16,9 @@
     },
     "dependencies": {
         "request": ">=2.9.202",
-        "promised-io": ">=0.3.0"
+        "promised-io": ">=0.3.0",
+        "jsgi": ">=0.2.5",
+        "spectrum": ">=0.4.2"
     },
     "devDependencies": {
         "litmus": ">=0.3.0",
