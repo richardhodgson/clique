@@ -1,3 +1,4 @@
+#!/bin/env node
 /*
 This should really just invoke Proton (use.no.de/proton) however it doesn't
 work with node v6.
@@ -7,7 +8,10 @@ var jsgi     = require('jsgi'),
     http     = require('http'),
     WebApp   = require('./lib/webapp').WebApp;
 
-var options = {bindTo: '0.0.0.0', port: 8090}
+var options = {
+    'bindTo': process.env.OPENSHIFT_INTERNAL_IP || '0.0.0.0',
+    'port'  : process.env.OPENSHIFT_INTERNAL_PORT || 8090
+};
 
 var webapp = new WebApp();
 
