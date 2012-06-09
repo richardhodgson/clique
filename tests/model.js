@@ -57,6 +57,25 @@ exports.test = new litmus.Test('Internal clique objects', function () {
         mock_request_callback('an error', null, null);
     });
 
+    this.async('test get dependencies', function (complete) {
+
+        testModule.get().then(function () {
+
+            test.is(
+                testModule.getDependencies(),
+                [
+                    "./a",
+                    "./b"
+                ],
+                'Dependencies are found in module definition'
+            )
+
+            complete.resolve();
+        });
+
+        mock_request_callback(null, {statusCode: 200}, ' /* a comment */ define(["./a", "./b"], function () { console.log("test"); })');
+    });
+
     test.async('package creates and gets modules', function (complete) {
 
         var Package = require('../lib/model').Package;
