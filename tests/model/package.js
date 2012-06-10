@@ -86,7 +86,7 @@ exports.test = new litmus.Test('Model Package', function () {
         testPackage.get().then(function (contents) {
             test.is(
                 contents,
-                'define(function () {}) define(["./path/three"], function () {}) define(["./two"], function () {})',
+                'define("http://example.com/path/three",function () {}) define("http://example.com/two",["./path/three"], function () {}) define("http://example.com/one",["./two"], function () {})',
                 'Package is created from module and its dependency'
             );
             complete.resolve();

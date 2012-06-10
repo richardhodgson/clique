@@ -2,7 +2,7 @@ var litmus = require('litmus');
 
 exports.test = new litmus.Test('Model Module', function () {
     var test = this;
-    test.plan(16);
+    test.plan(18);
 
     var Module = require('../../lib/model').Module;
 
@@ -30,7 +30,7 @@ exports.test = new litmus.Test('Model Module', function () {
     var result = testModule.get();
     test.isa(result['then'], Function, 'get returns a promise');
 
-    this.async('test successful response', function (complete) {
+    this.async('test successful script response', function (complete) {
 
         testModule.get().then(function (module) {
 
@@ -40,6 +40,33 @@ exports.test = new litmus.Test('Model Module', function () {
         });
 
         mock_request_callback(null, {statusCode: 200}, 'some contents');
+    });
+
+    this.async('test successful AMD response', function (complete) {
+
+        var mock_request_callback,
+            mock_request = {};
+
+        mock_request.get = function (url, callback) {
+            test.is(url, 'http://example.com/my/amd/module.js', 'module calls request module with url');
+            mock_request_callback = callback;
+        }
+
+        var amdModule = new Module('http://example.com/my/amd/module.js');
+        amdModule.setHttpClient(mock_request);
+
+        amdModule.get().then(function (module) {
+
+            test.is(
+                module.toString(),
+                'define("http://example.com/my/amd/module",["./something"], function () { ["contents"]; })',
+                'the module id is added if the response includes a define statement'
+            );
+
+            complete.resolve();
+        });
+
+        mock_request_callback(null, {statusCode: 200}, 'define(["./something"], function () { ["contents"]; })');
     });
 
     test.async('test error response', function (complete) {
