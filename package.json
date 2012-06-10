@@ -2,7 +2,7 @@
     "author": "Richard Hodgson <contact@rhodgson.co.uk> (http://rhodgson.co.uk)",
     "name": "clique",
     "description": "Self service RequireJS packages.",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "homepage": "http://clique.rhodgson.co.uk/",
     "repository": {
         "type": "git",
