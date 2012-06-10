@@ -2,7 +2,7 @@ var litmus = require('litmus');
 
 exports.test = new litmus.Test('Model Module', function () {
     var test = this;
-    test.plan(12);
+    test.plan(16);
 
     var Module = require('../../lib/model').Module;
 
@@ -91,4 +91,30 @@ exports.test = new litmus.Test('Model Module', function () {
 
         mock_request_callback(null, {statusCode: 200}, ' /* a comment */ define(function () { ["./a", "./b"]; })');
     });
+
+    var anotherModule = new Module('http://example.com/path/to/something.js');
+
+    test.is(
+        anotherModule.urlForPath('./other'),
+        'http://example.com/path/to/other.js',
+        'Determine the absolute url for a sibling file'
+    );
+
+    test.is(
+        anotherModule.urlForPath('../../other'),
+        'http://example.com/other.js',
+        'Determine the absolute url for a base file'
+    );
+
+    test.is(
+        anotherModule.urlForPath('./something/other'),
+        'http://example.com/path/to/something/other.js',
+        'Determine the absolute url for a child file'
+    );
+
+    test.is(
+        anotherModule.urlForPath('another'),
+        'http://example.com/path/to/another.js',
+        'Determine the absolute url non relative module id'
+    );
 });
