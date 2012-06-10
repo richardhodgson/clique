@@ -1,10 +1,11 @@
 var litmus  = require('litmus'),
-    Promise = require('promised-io/promise').Promise;
+    Promise = require('promised-io/promise').Promise,
+    fs      = require('promised-io/fs')
 
 exports.test = new litmus.Test('Webapp', function () {
     var test = this;
 
-    test.plan(7);
+    test.plan(9);
 
     var WebApp = require('../lib/webapp').WebApp;
 
@@ -72,6 +73,29 @@ exports.test = new litmus.Test('Webapp', function () {
         ],
         'Can convert a package querystring into an array of urls'
     );
+
+    test.async('test clique.js', function (complete) {
+
+        var clique  = new WebApp(),
+            request = new mockRequest('GET', '/clique.js');
+
+        fs.readFile(__dirname + '/../lib/clique.js', 'utf8').then(function (data) {
+
+            var expectedContents = 'define(function(require, exports, module){'
+                                 + data.toString('utf8')
+                                 + '})';
+
+            clique.handle(request).then(function (response) {
+                test.is(response.status, 200, 'Page is found');
+                test.is(
+                    response.body,
+                    expectedContents,
+                    'clique.js responds with the contents of the clique module'
+                );
+                complete.resolve();
+            });            
+        });
+    });
 });
 
 
