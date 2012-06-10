@@ -32,9 +32,9 @@ exports.test = new litmus.Test('Model Module', function () {
 
     this.async('test successful response', function (complete) {
 
-        testModule.get().then(function (contents) {
+        testModule.get().then(function (module) {
 
-            test.is(contents, 'some contents', 'resource body is returned by calling get()');
+            test.is(module.toString(), 'some contents', 'resource body is returned by calling get()');
 
             complete.resolve();
         });
