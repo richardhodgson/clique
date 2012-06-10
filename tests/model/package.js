@@ -2,7 +2,7 @@ var litmus = require('litmus');
 
 exports.test = new litmus.Test('Model Package', function () {
     var test = this;
-    test.plan(7);
+    test.plan(8);
 
     var Package = require('../../lib/model').Package;
 
@@ -70,6 +70,10 @@ exports.test = new litmus.Test('Model Package', function () {
                     break;
                 case 2:
                     test.is(url, 'http://example.com/two.js', 'dependency second module is requested');
+                    response = 'define(["./path/three"], function () {})';
+                    break;
+                case 3:
+                    test.is(url, 'http://example.com/path/three.js', 'dependency third module is requested');
                     response = 'define(function () {})';
                     break;
             }
@@ -82,7 +86,7 @@ exports.test = new litmus.Test('Model Package', function () {
         testPackage.get().then(function (contents) {
             test.is(
                 contents,
-                'define(function () {}) define(["./two"], function () {})',
+                'define(function () {}) define(["./path/three"], function () {}) define(["./two"], function () {})',
                 'Package is created from module and its dependency'
             );
             complete.resolve();
