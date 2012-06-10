@@ -2,7 +2,7 @@ var litmus = require('litmus');
 
 exports.test = new litmus.Test('Model Package', function () {
     var test = this;
-    test.plan(4);
+    test.plan(7);
 
     var Package = require('../../lib/model').Package;
 
@@ -49,6 +49,45 @@ exports.test = new litmus.Test('Model Package', function () {
             test.is(contents, 'response1 response2', 'Package is created from module responses');
             complete.resolve();
         });
+    });
+
+    test.async('package will resolve module dependencies', function (complete) {
+        var testPackage = new Package([
+            'http://example.com/one.js'
+        ]);
+
+        var counter = 0,
+            mock_request = {};
+
+        mock_request.get = function (url, callback) {
+            var response = '';
+            counter++;
+
+            switch (counter) {
+                case 1:
+                    test.is(url, 'http://example.com/one.js', 'first module is requested');
+                    response = 'define(["./two"], function () {})';
+                    break;
+                case 2:
+                    test.is(url, 'http://example.com/two.js', 'dependency second module is requested');
+                    response = 'define(function () {})';
+                    break;
+            }
+
+            callback(null, {statusCode: 200}, response);
+        };
+
+        testPackage.setHttpClient(mock_request);
+
+        testPackage.get().then(function (contents) {
+            test.is(
+                contents,
+                'define(function () {}) define(["./two"], function () {})',
+                'Package is created from module and its dependency'
+            );
+            complete.resolve();
+        });
+
     });
 });
 
