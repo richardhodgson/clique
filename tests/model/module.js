@@ -118,3 +118,22 @@ exports.test = new litmus.Test('Model Module', function () {
         'Determine the absolute url non relative module id'
     );
 });
+
+
+function createMockModules (urls, httpClient) {
+
+    var Module = require('../../lib/model').Module;
+
+    var modules = {};
+
+    for (var i = 0, l = urls.length; i < l; i++) {
+        var url    = urls[i],
+            module = new Module(url);
+
+        module.setHttpClient(httpClient);
+        modules[url] = module;
+    }
+
+    return modules;
+}
+module.exports.createMockModules = createMockModules;

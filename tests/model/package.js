@@ -1,13 +1,12 @@
-var litmus = require('litmus'),
-    Module = require('../../lib/model').Module;
+var litmus = require('litmus');
 
 exports.test = new litmus.Test('Model Package', function () {
     var test = this;
     test.plan(4);
 
-    test.async('package creates and gets modules', function (complete) {
+    var Package = require('../../lib/model').Package;
 
-        var Package = require('../../lib/model').Package;
+    test.async('package creates and gets modules', function (complete) {
 
         var testPackage = new Package([
             'http://example.com/one.js',
@@ -16,9 +15,9 @@ exports.test = new litmus.Test('Model Package', function () {
 
         test.isa(testPackage, Package, 'can create an instance of Package');
 
-
         var counter = 0,
             mock_request = {};
+
         mock_request.get = function (url, callback) {
             counter++;
             callback(null, {statusCode: 200}, 'response' + counter);
@@ -30,7 +29,13 @@ exports.test = new litmus.Test('Model Package', function () {
 
         test.is(
             modules,
-            createMockModules(Module, mock_request),
+            require('./module').createMockModules(
+                [
+                    'http://example.com/one.js',
+                    'http://example.com/two.js'
+                ],
+                mock_request
+            ),
             'Package creates module instances for each url is was constructed with'
         );
 
@@ -45,18 +50,6 @@ exports.test = new litmus.Test('Model Package', function () {
             complete.resolve();
         });
     });
+
 });
 
-function createMockModules (Module, httpClient) {
-
-    var modules = {
-        'http://example.com/one.js': new Module('http://example.com/one.js'),
-        'http://example.com/two.js': new Module('http://example.com/two.js')
-    }
-
-    for (var module in modules) {
-        modules[module].setHttpClient(httpClient);
-    }
-
-    return modules;
-}
