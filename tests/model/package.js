@@ -40,7 +40,7 @@ exports.test = new litmus.Test('Model Package', function () {
         );
 
         test.is(
-            modules['http://example.com/one.js'].getHttpClient().get,
+            modules[0].getHttpClient().get,
             mock_request.get,
             'Package proxies http client to child Modules'
         );
@@ -50,6 +50,5 @@ exports.test = new litmus.Test('Model Package', function () {
             complete.resolve();
         });
     });
-
 });
 

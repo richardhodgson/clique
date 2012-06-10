@@ -63,10 +63,13 @@ exports.test = new litmus.Test('Model Module', function () {
 
             test.is(
                 testModule.getDependencies(),
-                [
-                    "./a",
-                    "./b"
-                ],
+                createMockModules(
+                    [
+                        "http://example.com/a.js",
+                        "http://example.com/b.js"
+                    ],
+                    mock_request
+                ),
                 'Dependencies are found in module definition'
             )
 
@@ -124,14 +127,14 @@ function createMockModules (urls, httpClient) {
 
     var Module = require('../../lib/model').Module;
 
-    var modules = {};
+    var modules = [];
 
     for (var i = 0, l = urls.length; i < l; i++) {
         var url    = urls[i],
             module = new Module(url);
 
         module.setHttpClient(httpClient);
-        modules[url] = module;
+        modules.push(module);
     }
 
     return modules;
