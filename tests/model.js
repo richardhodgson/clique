@@ -2,7 +2,7 @@ var litmus = require('litmus');
 
 exports.test = new litmus.Test('Internal clique objects', function () {
     var test = this;
-    test.plan(12);
+    test.plan(16);
 
     var Module = require('../lib/model').Module;
 
@@ -74,6 +74,22 @@ exports.test = new litmus.Test('Internal clique objects', function () {
         });
 
         mock_request_callback(null, {statusCode: 200}, ' /* a comment */ define(["./a", "./b"], function () { console.log("test"); })');
+    });
+
+    this.async('test get no dependencies', function (complete) {
+
+        testModule.get().then(function () {
+
+            test.is(
+                testModule.getDependencies(),
+                [],
+                'No dependencies are found in module definition'
+            )
+
+            complete.resolve();
+        });
+
+        mock_request_callback(null, {statusCode: 200}, ' /* a comment */ define(function () { ["./a", "./b"]; })');
     });
 
     test.async('package creates and gets modules', function (complete) {
