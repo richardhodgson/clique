@@ -2,7 +2,7 @@ var litmus = require('litmus');
 
 exports.test = new litmus.Test('Main clique api', function () {
     var test = this;
-    test.plan(2);
+    test.plan(3);
 
     var clique = require('../lib/clique');
 
@@ -21,6 +21,14 @@ exports.test = new litmus.Test('Main clique api', function () {
         },
         /expects an array of urls/,
         'not passing an argument throws an error'
-    )
+    );
+
+    test.throwsOk(
+        function () {
+            clique.create([])
+        },
+        /expects an array of urls/,
+        'clique expects at least one url'
+    );
 
 });
