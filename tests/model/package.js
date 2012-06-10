@@ -1,13 +1,13 @@
 var litmus = require('litmus'),
-    Module = require('../lib/model').Module;
+    Module = require('../../lib/model').Module;
 
 exports.test = new litmus.Test('Model Package', function () {
     var test = this;
-    test.plan(16);
+    test.plan(4);
 
     test.async('package creates and gets modules', function (complete) {
 
-        var Package = require('../lib/model').Package;
+        var Package = require('../../lib/model').Package;
 
         var testPackage = new Package([
             'http://example.com/one.js',
