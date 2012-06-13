@@ -1,11 +1,12 @@
 var litmus = require('litmus');
 
 exports.test = new litmus.Test('Model Package', function () {
+
     var test = this;
-    test.plan(8);
+    test.plan(14);
 
     var Package = require('../../lib/model').Package;
-
+    
     test.async('package creates and gets modules', function (complete) {
 
         var testPackage = new Package([
@@ -91,7 +92,65 @@ exports.test = new litmus.Test('Model Package', function () {
             );
             complete.resolve();
         });
+    });
 
+
+    test.async("package doesn't request the same module more than once", function (complete) {
+        var testPackage = new Package([
+            'http://example.com/one.js',
+            'http://example.com/path/four.js'
+        ]);
+
+        var counter = 0,
+            mock_request = {};
+
+        mock_request.get = function (url, callback) {
+            var response = '';
+            counter++;
+
+            switch (counter) {
+                case 1:
+                    test.is(url, 'http://example.com/one.js', 'first module is requested');
+                    response = 'define(["./two"], function () {})';
+                    break;
+                case 2:
+                    test.is(url, 'http://example.com/path/four.js', 'second module is requested');
+                    response = 'define(["./three"], function () {})';
+                    break;
+                case 3:
+                    test.is(url, 'http://example.com/two.js', 'dependency second module is requested');
+                    response = 'define(["./path/three"], function () {})';
+                    break;
+                case 4:
+                    test.is(url, 'http://example.com/path/three.js', 'dependency third module is requested');
+                    response = 'define(function () {})';
+                    break;
+
+                default:
+                    test.fail('Made more requests than expected');
+            }
+
+            callback(null, {statusCode: 200}, response);
+        };
+
+        testPackage.setHttpClient(mock_request);
+
+        testPackage.get().then(function (contents) {
+
+            test.is(
+                counter,
+                4,
+                'Http client was called 4 times with two dependencies on the same module'
+            );
+
+            test.is(
+                contents,
+                'define("http://example.com/path/three",function () {}) define("http://example.com/two",["./path/three"], function () {}) define("http://example.com/one",["./two"], function () {})  define("http://example.com/path/four",["./three"], function () {})',
+                'Duplicate absolute dependencies are only requested once per module'
+            );
+
+            complete.resolve();
+        });
     });
 });
 
