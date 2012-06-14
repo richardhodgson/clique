@@ -1,8 +1,12 @@
-_(work in progress, see whats still [todo](https://github.com/richardhodgson/clique/blob/master/todo.md))_
-
 # Clique
 
-Self service RequireJS packages.
+Self service AMD packages.
+
+Its generally considered better to deliver a web page's JS in as few requests as possible. The solution should be simple and not rely on a build or similiar pre-deploy step.
+
+Minimising requests shouldn't affect cacheability. JS urls that include a unique identifier in their url (such as a version number) should still be able to be publically far-future cached and delivered in a single request.
+
+A project's use of a JS loader should unaffected by how the JS is packaged.
 
     npm install clique
 
